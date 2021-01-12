@@ -33,14 +33,26 @@ public interface DefinitionConfigInterface {
 
 	@SubSection
 	@ConfComments({
-		"A list of rules that the user must have along with time played in order for the",
-		"rank to apply. This can include group names, permission names, or neither.",
-		"All of those rules must apply or the system will skip the process for the user",
-		"even if the time played matches.",
+		"A list of groups and permissions that the player must have for the process",
+		"to continue. This can include group names, permission names, or neither.",
+		"All of those rules must apply to the player in question, or the system will",
+		"skip the processing of this definition file for the user even if the time played matches.",
 		"This is useful to make different time-based rules for users who belong to different",
 		"rules. Leave blank for the system to only consider time played and nothing else."
 	})
-	SubSectionGroupPermListInterface prerequisites();
+	SubSectionGroupPermListInterface musthave();
+
+	@SubSection
+	@ConfComments({
+		"A list of groups and permissions that the player cannot have for the process",
+		"to continue. This can include group names, permission names, or neither.",
+		"Unlike the must-have list, the 'canthave' only considers *any* of the groups",
+		"or permissions in the list, even if the player does not have all of them. If",
+		"one is true for the player, the process stops.",
+		"This is useful to assign permissions or groups that are overrides for the",
+		"time-based rules. You can have multiple override, and any override will apply."
+	})
+	SubSectionGroupPermListInterface canthave();
 
 	@SubSection
 	@ConfComments({

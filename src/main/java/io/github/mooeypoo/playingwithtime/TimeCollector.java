@@ -108,19 +108,41 @@ public class TimeCollector {
 				// Check if prerequisites are valid
 				Boolean validForPlayer = true;
 				for (DefinitionConfigInterface def : this.mapByTime.get(timeInMap)) {
-					// Check prerequisite groups
-					for (String groupName : def.prerequisites().groups()) {
+					// Check musthave groups
+					for (String groupName : def.musthave().groups()) {
 						if (!player.hasPermission("group." + groupName.trim())) {
 							validForPlayer = false;
 							break;
 						}
 					}
 
-					// Check prerequisite permissions
-					for (String permName : def.prerequisites().permissions()) {
-						if (!player.hasPermission(permName.trim())) {
-							validForPlayer = false;
-							break;
+					// Check musthave permissions
+					if (validForPlayer && def.musthave().permissions().size() > 0) {
+						for (String permName : def.musthave().permissions()) {
+							if (!player.hasPermission(permName.trim())) {
+								validForPlayer = false;
+								break;
+							}
+						}
+					}
+
+					// Check canthave groups
+					if (validForPlayer && def.canthave().groups().size() > 0) {
+						for (String groupName : def.canthave().groups()) {
+							if (player.hasPermission("group." + groupName.trim())) {
+								validForPlayer = false;
+								break;
+							}
+						}
+					}
+
+					// Check musthave permissions
+					if (validForPlayer && def.canthave().permissions().size() > 0) {
+						for (String permName : def.canthave().permissions()) {
+							if (player.hasPermission(permName.trim())) {
+								validForPlayer = false;
+								break;
+							}
 						}
 					}
 

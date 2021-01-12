@@ -127,7 +127,6 @@
 			<groupId>space.arim.dazzleconf</groupId>
 			<artifactId>dazzleconf-ext-snakeyaml</artifactId>
 			<version>1.1.0</version>
-			<scope>provided</scope> <!-- Prevents it from being shaded -->
 		</dependency>
 
 		<dependency>
