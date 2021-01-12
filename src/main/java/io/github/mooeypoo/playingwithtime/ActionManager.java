@@ -1,5 +1,6 @@
 package io.github.mooeypoo.playingwithtime;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -16,6 +17,7 @@ public class ActionManager {
 	private JavaPlugin plugin;
 	private TimeCollector timeCollector;
 	private HashMap<String, String> commands = new HashMap<String, String>();
+	private static DecimalFormat timeMinuteFormat = new DecimalFormat("#.##");
 
 	public ActionManager(JavaPlugin plugin) {
 		this.plugin = plugin;
@@ -64,7 +66,7 @@ public class ActionManager {
 		}
 		String addGroupCommand = this.commands.get("group");
 		String addPermCommand = this.commands.get("permission");
-
+		Double playerTimeInGame = this.timeCollector.getPlayerTimeInMinutes(player);
 		// Output log
 		this.plugin.getLogger().info(
 				"Player \"" + player.getName() + "\" time on server (" +
@@ -87,7 +89,7 @@ public class ActionManager {
 					this.plugin.getLogger().info(String.format("Applying group for player: [%s] -> %s", player.getName(), groupName));
 						// Schedule the command
 						this.dispatchCommand(
-							this.replaceCommandPlaceholders(addGroupCommand, player.getName(), groupName)
+							this.replaceCommandPlaceholders(addGroupCommand, player.getName(), groupName, playerTimeInGame)
 						);
 				}
 			}
@@ -104,7 +106,7 @@ public class ActionManager {
 					this.plugin.getLogger().info(String.format("Applying permission for player: [%s] -> %s", player.getName(), permName));
 						// Schedule the command
 						this.dispatchCommand(
-							this.replaceCommandPlaceholders(addPermCommand, player.getName(), permName)
+							this.replaceCommandPlaceholders(addPermCommand, player.getName(), permName, playerTimeInGame)
 						);
 				}
 			}
@@ -113,7 +115,7 @@ public class ActionManager {
 			for (String cmd : def.custom_commands()) {
 				// Replace magic words:
 				this.dispatchCommand(
-					this.replaceCommandPlaceholders(cmd, player.getName(), "")
+					this.replaceCommandPlaceholders(cmd, player.getName(), "", playerTimeInGame)
 				);
 			}
 		}
@@ -126,11 +128,12 @@ public class ActionManager {
 		Bukkit.dispatchCommand(Bukkit.getConsoleSender(), runnableCommand);
 	}
 	
-	private String replaceCommandPlaceholders(String rawCommand, String playerName, String typeName) {
+	private String replaceCommandPlaceholders(String rawCommand, String playerName, String typeName, Double timeInGame) {
 		String cmd = rawCommand;
 
 		return cmd
 			.replaceAll("%playername%", playerName)
-			.replaceAll("%typename%", typeName);
+			.replaceAll("%typename%", typeName)
+			.replaceAll("%timeingame%", timeMinuteFormat.format(timeInGame));
 	}
 }

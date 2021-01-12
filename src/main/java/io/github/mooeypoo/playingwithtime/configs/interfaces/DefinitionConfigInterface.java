@@ -23,7 +23,10 @@ public interface DefinitionConfigInterface {
 		"Custom command that will run if the user matches time played and prerequisites",
 		"But will **not** run if the user already has the group/perms under \"add\" groups",
 		"Watch out; if nothing is provided under 'add' group above, this command will run",
-		"every time the user logs in if their time played is above the value"
+		"every time the user logs in if their time played is above the value.",
+		"Available placeholders for commands:",
+		"- %playername% Player name",
+		"- %timeingame% Player's time in game, in minutes."
 	})
 	@DefaultStrings({})
 	Set<String> custom_commands();
