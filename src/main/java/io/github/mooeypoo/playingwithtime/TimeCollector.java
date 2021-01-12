@@ -3,6 +3,7 @@ package io.github.mooeypoo.playingwithtime;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Set;
 
 import org.bukkit.Statistic;
 import org.bukkit.entity.Player;
@@ -91,6 +92,61 @@ public class TimeCollector {
 	}
 	
 	/**
+	 * Check if the player has all of the specified permissions or groups
+	 *
+	 * @param conditionList List of permissions or groups to test 
+	 * @param player Player to test against
+	 * @param isGroup The values of the list are groups
+	 * @return Player has all requested values
+	 */
+	private Boolean doesPlayerHaveAll(Set<String> conditionList, Player player, Boolean isGroup) {
+		if (conditionList.size() > 0) {
+			for (String checkName : conditionList) {
+				String fixedCheckName = isGroup ? "group." + checkName.trim() : checkName.trim();
+				if (!player.hasPermission(fixedCheckName)) {
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+
+	/**
+	 * Check if the player does not have any of the specified permissions or groups
+	 *
+	 * @param conditionList List of permissions or groups to test 
+	 * @param player Player to test against
+	 * @param isGroup The values of the list are groups
+	 * @return Player has none requested values
+	 */
+	private Boolean doesPlayerHaveNone(Set<String> conditionList, Player player, Boolean isGroup) {
+		if (conditionList.size() > 0) {
+			for (String checkName : conditionList) {
+				String fixedCheckName = isGroup ? "group." + checkName.trim() : checkName.trim();
+				if (player.hasPermission(fixedCheckName)) {
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+
+	/**
+	 * Check whether all prerequisites (musthaves and canthaves) pass for this player
+	 *
+	 * @param player Requested player
+	 * @param def Configuration definition
+	 * @return Prerequisites pass
+	 */
+	private Boolean doPrerequisitesPass(Player player, DefinitionConfigInterface def) {
+		return (
+			this.doesPlayerHaveAll(def.musthave().groups(), player, true) &&
+			this.doesPlayerHaveAll(def.musthave().permissions(), player, false) &&
+			this.doesPlayerHaveNone(def.canthave().groups(), player, true) &&
+			this.doesPlayerHaveNone(def.canthave().permissions(), player, false)
+		);
+	}
+	/**
 	 * Get a list of the definitions that apply to the user from all measurable rules:
 	 * - The user's in-game play time on the server matches the definition
 	 * - All the prerequisites groups an permissions apply to the user (if they exist)
@@ -104,52 +160,15 @@ public class TimeCollector {
 		// Get relevant times from the map:
 		for (Double timeInMap : this.mapByTime.keySet()) {
 			// Check if time is valid for the user (user time is bigger than or equal to time stated)
-			if (this.getPlayerTimeInMinutes(player) >= timeInMap) {
-				// Check if prerequisites are valid
-				Boolean validForPlayer = true;
-				for (DefinitionConfigInterface def : this.mapByTime.get(timeInMap)) {
-					// Check musthave groups
-					for (String groupName : def.musthave().groups()) {
-						if (!player.hasPermission("group." + groupName.trim())) {
-							validForPlayer = false;
-							break;
-						}
-					}
+			if (this.getPlayerTimeInMinutes(player) < timeInMap) {
+				continue;
+			}
 
-					// Check musthave permissions
-					if (validForPlayer && def.musthave().permissions().size() > 0) {
-						for (String permName : def.musthave().permissions()) {
-							if (!player.hasPermission(permName.trim())) {
-								validForPlayer = false;
-								break;
-							}
-						}
-					}
-
-					// Check canthave groups
-					if (validForPlayer && def.canthave().groups().size() > 0) {
-						for (String groupName : def.canthave().groups()) {
-							if (player.hasPermission("group." + groupName.trim())) {
-								validForPlayer = false;
-								break;
-							}
-						}
-					}
-
-					// Check canthave permissions
-					if (validForPlayer && def.canthave().permissions().size() > 0) {
-						for (String permName : def.canthave().permissions()) {
-							if (player.hasPermission(permName.trim())) {
-								validForPlayer = false;
-								break;
-							}
-						}
-					}
-
-					if (validForPlayer) {
-						// Valid! add it to the result list
-						result.add(def);
-					}
+			// Check if prerequisites are valid
+			for (DefinitionConfigInterface def : this.mapByTime.get(timeInMap)) {
+				if (this.doPrerequisitesPass(player, def)) {
+					// Valid! add it to the result list
+					result.add(def);
 				}
 			}
 		}
