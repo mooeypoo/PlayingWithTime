@@ -136,7 +136,7 @@ public class TimeCollector {
 						}
 					}
 
-					// Check musthave permissions
+					// Check canthave permissions
 					if (validForPlayer && def.canthave().permissions().size() > 0) {
 						for (String permName : def.canthave().permissions()) {
 							if (player.hasPermission(permName.trim())) {
