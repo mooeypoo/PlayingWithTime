@@ -1,0 +1,9 @@
+name: PlayingWithTime
+main: io.github.mooeypoo.playingwithtime.PlayingWithTime
+version: 1.0.0
+description: Set permissions to your players based on time played in your server
+author: mooeypoo
+permissions:
+   playingwithtime.ignore:
+      description: Anyone with this permission will be ignored from the process of calculating time played on the server.
+      default: op
