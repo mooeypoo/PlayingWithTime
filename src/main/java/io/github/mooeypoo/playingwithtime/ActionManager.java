@@ -3,6 +3,7 @@ package io.github.mooeypoo.playingwithtime;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Set;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -55,61 +56,86 @@ public class ActionManager {
 		this.commands.put("permission", cmdGroups.add_permission());
 	}
 	
+	/**
+	 * Check if a string variable is empty
+	 *
+	 * @param str Requested variable
+	 * @return Variable is empty
+	 */
 	private Boolean isEmpty(String str) {
 		return str == null || str.trim().isEmpty();
 	}
 
+	private void log(String output) {
+		this.plugin.getLogger().info("[PlayingWithTime] " + output);
+	}
+
+	/**
+	 * Process the list of add groups or permissions for the user
+	 *
+	 * @param player Requested player
+	 * @param addList List of permissions or groups to apply
+	 * @param isGroup Whether the list is adding groups (true) or permissions (false)
+	 */
+	private void processAddCommand(Player player, Set<String> addList, Boolean isGroup) {
+		String useCommand = isGroup ? this.commands.get("group") : this.commands.get("permission");
+
+		if (this.isEmpty(useCommand)) {
+			return;
+		}
+
+		// Queue commands for adding groups
+		for (String itemName : addList) {
+			if (player.hasPermission(
+					isGroup ? "group." + itemName.trim() : itemName.trim()
+			)) {
+				this.log(String.format(
+					"(Skipping assignment) Player [%s] %s [%s]",
+					player.getName(),
+					isGroup ? "is already in group" : "already has permission",
+					itemName
+				));
+				continue;
+			}
+
+			// Apply group for user using the given command
+			this.log(String.format(
+					"Applying %s for player: [%s] -> %s",
+					isGroup ? "group" : "permission",
+					player.getName(),
+					itemName
+			));
+
+			// Schedule the command
+			this.dispatchCommand(
+				this.replaceCommandPlaceholders(useCommand, player.getName(), itemName, this.timeCollector.getPlayerTimeInMinutes(player))
+			);
+		}
+	}
+	/**
+	 * Process a player's in-game time and actions
+	 *
+	 * @param player Requested player
+	 */
 	public void processPlayer(Player player) {
 		ArrayList<DefinitionConfigInterface> definitions = this.timeCollector.getRelevantDefinitionsForPlayer(player);
 		if (definitions.isEmpty()) {
 			return;
 		}
-		String addGroupCommand = this.commands.get("group");
-		String addPermCommand = this.commands.get("permission");
 		Double playerTimeInGame = this.timeCollector.getPlayerTimeInMinutes(player);
 		// Output log
-		this.plugin.getLogger().info(
-				"Player \"" + player.getName() + "\" time on server (" +
-				this.timeCollector.getPlayerTimeInMinutes(player) + 
-				"mins) matched given update rules. Processing actions for [" +
-				definitions.size() + "] relevant definitions."
+		this.log(
+			String.format(
+				"[%s] time on server (%s mins) match %d relevant rules.",
+				player.getName(),
+				"" + timeMinuteFormat.format(playerTimeInGame),
+				definitions.size()
+			)
 		);
 		// Go over all definitions that are relevant for this player
 		for (DefinitionConfigInterface def : definitions) {
-			if (!this.isEmpty(addGroupCommand)) {
-				// Queue commands for adding groups
-				for (String groupName : def.add().groups()) {
-					if (player.hasPermission("group." + groupName.trim())) {
-						this.plugin.getLogger().info(String.format("Skipping. Player [%s] is already in group [%s]", player.getName(), groupName));
-						// If the player already has this permission, skip
-						continue;
-					}
-
-					// Apply group for user using the given command
-					this.plugin.getLogger().info(String.format("Applying group for player: [%s] -> %s", player.getName(), groupName));
-						// Schedule the command
-						this.dispatchCommand(
-							this.replaceCommandPlaceholders(addGroupCommand, player.getName(), groupName, playerTimeInGame)
-						);
-				}
-			}
-
-			if (!this.isEmpty(addPermCommand)) {
-				// Queue commands for adding permissions
-				for (String permName : def.add().permissions()) {
-					if (player.hasPermission(permName.trim())) {
-						this.plugin.getLogger().info(String.format("Skipping. Player [%s] already has permission [%s]", player.getName(), permName));
-						// If the player already has this permission, skip
-						continue;
-					}
-					// Apply group for user using the given command
-					this.plugin.getLogger().info(String.format("Applying permission for player: [%s] -> %s", player.getName(), permName));
-						// Schedule the command
-						this.dispatchCommand(
-							this.replaceCommandPlaceholders(addPermCommand, player.getName(), permName, playerTimeInGame)
-						);
-				}
-			}
+			this.processAddCommand(player, def.add().groups(), true);
+			this.processAddCommand(player, def.add().permissions(), false);
 
 			// Queue custom_commands 
 			for (String cmd : def.custom_commands()) {
@@ -122,9 +148,14 @@ public class ActionManager {
 
 	}
 	
+	/**
+	 * Dispatch raw console command to the server
+	 * 
+	 * @param cmd Command to dispatch
+	 */
 	private void dispatchCommand(String cmd) {
 		final String runnableCommand = cmd;
-		this.plugin.getLogger().info("PlayingWithTime invoking command: " + runnableCommand);
+		this.log("Invoking command: " + runnableCommand);
 		Bukkit.dispatchCommand(Bukkit.getConsoleSender(), runnableCommand);
 	}
 	
