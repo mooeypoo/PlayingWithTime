@@ -79,7 +79,7 @@ public class ActionManager {
 	 */
 	private void processAddCommand(Player player, Set<String> addList, Boolean isGroup) {
 		String useCommand = isGroup ? this.commands.get("group") : this.commands.get("permission");
-
+		String typeStr = isGroup ? "group" : "permission";
 		if (this.isEmpty(useCommand)) {
 			return;
 		}
@@ -90,9 +90,9 @@ public class ActionManager {
 					isGroup ? "group." + itemName.trim() : itemName.trim()
 			)) {
 				this.log(String.format(
-					"(Skipping assignment) Player [%s] %s [%s]",
+					"(Skipping assignment) Player [%s] already has %s assignment [%s]",
 					player.getName(),
-					isGroup ? "is already in group" : "already has permission",
+					typeStr,
 					itemName
 				));
 				continue;
@@ -101,7 +101,7 @@ public class ActionManager {
 			// Apply group for user using the given command
 			this.log(String.format(
 					"Applying %s for player: [%s] -> %s",
-					isGroup ? "group" : "permission",
+					typeStr,
 					player.getName(),
 					itemName
 			));

@@ -50,7 +50,6 @@ public class TimeCollector {
 			} catch (ConfigurationException e) {
 				// Something is wrong with this definition. Skip
 				errors.add("Could not process definition for '" + def + ":' " + e.getMessage());
-				continue;
 			}
 			
 			Double actualTime = 0.0;
@@ -59,9 +58,12 @@ public class TimeCollector {
 			} catch (NumberFormatException e) {
 				// Time is not formatted correctly, we have to ignore
 				errors.add("Malformed time in '" + def + ":' " + e.getMessage());
+			}
+
+			if (!errors.isEmpty()) {
 				continue;
 			}
-			
+
 			// Now that we have the actual time, add that to the map:
 			ArrayList<DefinitionConfigInterface> listForTime = this.mapByTime.get(actualTime);
 			if (listForTime == null) {
@@ -100,12 +102,9 @@ public class TimeCollector {
 	 * @return Player has all requested values
 	 */
 	private Boolean doesPlayerHaveAll(Set<String> conditionList, Player player, Boolean isGroup) {
-		if (conditionList.size() > 0) {
-			for (String checkName : conditionList) {
-				String fixedCheckName = isGroup ? "group." + checkName.trim() : checkName.trim();
-				if (!player.hasPermission(fixedCheckName)) {
-					return false;
-				}
+		for (String checkName : conditionList) {
+			if (!player.hasPermission(isGroup ? "group." + checkName.trim() : checkName.trim())) {
+				return false;
 			}
 		}
 		return true;
@@ -120,12 +119,9 @@ public class TimeCollector {
 	 * @return Player has none requested values
 	 */
 	private Boolean doesPlayerHaveNone(Set<String> conditionList, Player player, Boolean isGroup) {
-		if (conditionList.size() > 0) {
-			for (String checkName : conditionList) {
-				String fixedCheckName = isGroup ? "group." + checkName.trim() : checkName.trim();
-				if (player.hasPermission(fixedCheckName)) {
-					return false;
-				}
+		for (String checkName : conditionList) {
+			if (player.hasPermission(isGroup ? "group." + checkName.trim() : checkName.trim())) {
+				return false;
 			}
 		}
 		return true;
