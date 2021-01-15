@@ -3,9 +3,7 @@ package io.github.mooeypoo.playingwithtime;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Set;
 
-import org.bukkit.Statistic;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -81,53 +79,6 @@ public class TimeCollector {
 	}
 	
 	/**
-	 * Get the player time in-game on this server, in minutes.
-	 * This is an estimate done by dividing by the ideal ticks-per-second count of 20.
-	 *
-	 * @param player Requested player
-	 * @return Times played on the server, in minutes
-	 */
-	public double getPlayerTimeInMinutes(Player player) {
-		int ticks = player.getStatistic(Statistic.PLAY_ONE_MINUTE);
-		double timeEstimateSeconds = ticks / 20.0; // Migrate from ticks to estimation of seconds; 20 ticks per second
-		return timeEstimateSeconds / 60.0;
-	}
-	
-	/**
-	 * Check if the player has all of the specified permissions or groups
-	 *
-	 * @param conditionList List of permissions or groups to test 
-	 * @param player Player to test against
-	 * @param isGroup The values of the list are groups
-	 * @return Player has all requested values
-	 */
-	private Boolean doesPlayerHaveAll(Set<String> conditionList, Player player, Boolean isGroup) {
-		for (String checkName : conditionList) {
-			if (!player.hasPermission(isGroup ? "group." + checkName.trim() : checkName.trim())) {
-				return false;
-			}
-		}
-		return true;
-	}
-
-	/**
-	 * Check if the player does not have any of the specified permissions or groups
-	 *
-	 * @param conditionList List of permissions or groups to test 
-	 * @param player Player to test against
-	 * @param isGroup The values of the list are groups
-	 * @return Player has none requested values
-	 */
-	private Boolean doesPlayerHaveNone(Set<String> conditionList, Player player, Boolean isGroup) {
-		for (String checkName : conditionList) {
-			if (player.hasPermission(isGroup ? "group." + checkName.trim() : checkName.trim())) {
-				return false;
-			}
-		}
-		return true;
-	}
-
-	/**
 	 * Check whether all prerequisites (musthaves and canthaves) pass for this player
 	 *
 	 * @param player Requested player
@@ -136,10 +87,10 @@ public class TimeCollector {
 	 */
 	private Boolean doPrerequisitesPass(Player player, DefinitionConfigInterface def) {
 		return (
-			this.doesPlayerHaveAll(def.musthave().groups(), player, true) &&
-			this.doesPlayerHaveAll(def.musthave().permissions(), player, false) &&
-			this.doesPlayerHaveNone(def.canthave().groups(), player, true) &&
-			this.doesPlayerHaveNone(def.canthave().permissions(), player, false)
+			ConditionChecker.doesPlayerHaveAll(def.musthave().groups(), player, true) &&
+			ConditionChecker.doesPlayerHaveAll(def.musthave().permissions(), player, false) &&
+			ConditionChecker.doesPlayerHaveNone(def.canthave().groups(), player, true) &&
+			ConditionChecker.doesPlayerHaveNone(def.canthave().permissions(), player, false)
 		);
 	}
 	/**
@@ -156,7 +107,7 @@ public class TimeCollector {
 		// Get relevant times from the map:
 		for (Double timeInMap : this.mapByTime.keySet()) {
 			// Check if time is valid for the user (user time is bigger than or equal to time stated)
-			if (this.getPlayerTimeInMinutes(player) < timeInMap) {
+			if (ConditionChecker.getPlayerTimeInMinutes(player) < timeInMap) {
 				continue;
 			}
 

@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 - Use maven shade plugin to control dependencies and trim jar size
-- 
+- Add tests and validation
+- Cleanup and prepare for stable release.
 
 [Unreleased]: https://github.com/mooeypoo/PlayingWithTime/compare/v0.0.1...HEAD

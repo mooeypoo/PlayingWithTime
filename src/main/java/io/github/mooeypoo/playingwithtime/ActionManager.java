@@ -45,25 +45,15 @@ public class ActionManager {
 		}
 		SubSectionGroupPermCommandsInterface cmdGroups = this.timeCollector.getMainConfigData().commands_definition_add();
 		this.commands.clear();
-		if (this.isEmpty(cmdGroups.add_group())) {
+		if (ConditionChecker.isStringEmpty(cmdGroups.add_group())) {
 			this.plugin.getLogger().warning("Main config does not have a command for adding group. All group actions will be skipped. Please review the main config file.");
 		}
-		if (this.isEmpty(cmdGroups.add_permission())) {
+		if (ConditionChecker.isStringEmpty(cmdGroups.add_permission())) {
 			this.plugin.getLogger().warning("Main config does not have a command for adding permissions. All permission actions will be skipped. Please review the main config file.");
 		}
 		// Store the commands to run to add groups/permissions
 		this.commands.put("group", cmdGroups.add_group());
 		this.commands.put("permission", cmdGroups.add_permission());
-	}
-	
-	/**
-	 * Check if a string variable is empty
-	 *
-	 * @param str Requested variable
-	 * @return Variable is empty
-	 */
-	private Boolean isEmpty(String str) {
-		return str == null || str.trim().isEmpty();
 	}
 
 	private void log(String output) {
@@ -80,7 +70,7 @@ public class ActionManager {
 	private void processAddCommand(Player player, Set<String> addList, Boolean isGroup) {
 		String useCommand = isGroup ? this.commands.get("group") : this.commands.get("permission");
 		String typeStr = isGroup ? "group" : "permission";
-		if (this.isEmpty(useCommand)) {
+		if (ConditionChecker.isStringEmpty(useCommand)) {
 			return;
 		}
 
@@ -108,7 +98,7 @@ public class ActionManager {
 
 			// Schedule the command
 			this.dispatchCommand(
-				this.replaceCommandPlaceholders(useCommand, player.getName(), itemName, this.timeCollector.getPlayerTimeInMinutes(player))
+				this.replaceCommandPlaceholders(useCommand, player.getName(), itemName, ConditionChecker.getPlayerTimeInMinutes(player))
 			);
 		}
 	}
@@ -122,7 +112,7 @@ public class ActionManager {
 		if (definitions.isEmpty()) {
 			return;
 		}
-		Double playerTimeInGame = this.timeCollector.getPlayerTimeInMinutes(player);
+		Double playerTimeInGame = ConditionChecker.getPlayerTimeInMinutes(player);
 		// Output log
 		this.log(
 			String.format(
