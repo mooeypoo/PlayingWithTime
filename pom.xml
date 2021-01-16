@@ -59,6 +59,13 @@
 	  		    <groupId>org.jacoco</groupId>
 	  		    <artifactId>jacoco-maven-plugin</artifactId>
 	  		    <version>0.8.5</version>
+	  		    <configuration>
+	                <excludes>
+	                	<exclude>io/github/mooeypoo/playingwithtime/configs/**/</exclude>
+	                	<exclude>io/github/mooeypoo/playingwithtime/ActionManager.*</exclude>
+	                	<exclude>io/github/mooeypoo/playingwithtime/ProcessException.*</exclude>
+	                </excludes>
+	  		    </configuration>
 	  		    <executions>
 	  		        <!--
 	  		            Prepares the property pointing to the JaCoCo runtime agent which
