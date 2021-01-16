@@ -1,5 +1,6 @@
 package io.github.mooeypoo.playingwithtime;
 
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,14 +20,30 @@ public class TimeCollector {
 
 	public TimeCollector(JavaPlugin plugin) {
 		this.plugin = plugin;
+		this.initConfigManager(Paths.get(this.plugin.getDataFolder().getPath()));
+	}
+	
+	// Meant for tests
+	public TimeCollector(Path configPath) {
+		this.initConfigManager(configPath);
+	}
 
+	private void initConfigManager(Path path) {
 		try {
-			this.configManager = new ConfigManager(Paths.get(this.plugin.getDataFolder().getPath()), "PlayingWithTime_rank");
+			this.configManager = new ConfigManager(path, "PlayingWithTime_rank");
 		} catch (ConfigurationException e) {
-			this.plugin.getLogger().warning("Initiation aborted for PlayingWithTime. Error in configuration file '" + e.getConfigFileName() + "': " + e.getMessage());
+			this.log("Initiation aborted for PlayingWithTime. Error in configuration file '" + e.getConfigFileName() + "': " + e.getMessage());
 		}
 	}
 	
+	private void log(String str) {
+		if (this.plugin != null) {
+			this.plugin.getLogger().info(str);
+		} else {
+			System.out.println(str);
+		}
+	}
+
 	/**
 	 * Initialize the time collector system by gathering all available definitions
 	 * and mapping them to a useful time-based map.
@@ -36,7 +53,9 @@ public class TimeCollector {
 	 */
 	public void initialize() throws ProcessException, ConfigurationException {
 		ArrayList<String> errors = new ArrayList<String>();
-
+		if (this.configManager == null) {
+			return;
+		}
 		// Reset and map config values
 		this.configManager.reload();
 		this.mapByTime.clear();
@@ -48,6 +67,7 @@ public class TimeCollector {
 			} catch (ConfigurationException e) {
 				// Something is wrong with this definition. Skip
 				errors.add("Could not process definition for '" + def + ":' " + e.getMessage());
+				continue;
 			}
 			
 			Double actualTime = 0.0;
@@ -56,9 +76,6 @@ public class TimeCollector {
 			} catch (NumberFormatException e) {
 				// Time is not formatted correctly, we have to ignore
 				errors.add("Malformed time in '" + def + ":' " + e.getMessage());
-			}
-
-			if (!errors.isEmpty()) {
 				continue;
 			}
 
@@ -128,10 +145,17 @@ public class TimeCollector {
 	 * @return Main configuration data
 	 */
 	public MainConfigInterface getMainConfigData() {
+		if (this.configManager == null) {
+			return null;
+		}
 		try {
 			return this.configManager.getMainConfigData();
 		} catch (ConfigurationException e) {
 			return null;
 		}
+	}
+	
+	public HashMap<Double, ArrayList<DefinitionConfigInterface>> getFullMap() {
+		return this.mapByTime;
 	}
 }

@@ -1,0 +1,21 @@
+ # A list of commands representing the way to add a permission and/or group to a user.
+ # The defaults utilize LuckPerm commands, but you can change this to utilize any other
+ # method of updating group or permission to your users.
+ # Make sure you use the correct placeholders:
+ # Available placeholders for commands:
+ # - %playername% Player name
+ # - %timeingame% Player's time in game, in minutes.
+ # - %typename% for the name of the permission or group that you want your user to be added to.
+ # You can add multiple commands -- all will be run when the process decides to add a group or permission
+ # to a player.
+ # NOTE: If no commands are specified, the system will NOT be able to add groups or permissions!
+commands_definition_add:
+   # Raw command to add a group to a user. The added groups are defined in each config in the 'add' section.
+  add_group: 'lp user %playername% parent set %typename%'
+   # Raw command to add permission to a user. The added permissions are defined in each config in the 'add' section.
+  add_permission: 'lp user %playername% permission set %typename% true'
+ # A list of ranks to use. Each rank name will be defined in a separate file that's defined
+ # in a separate config, determining the in-game time to activate and the resulting permission
+ # or groups to be added to the player when that time is met.
+definitions:
+  -  '1h'

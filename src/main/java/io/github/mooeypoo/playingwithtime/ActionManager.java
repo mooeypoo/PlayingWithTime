@@ -34,22 +34,22 @@ public class ActionManager {
 		try {
 			this.timeCollector.initialize();
 		} catch (ProcessException e) {
-			this.plugin.getLogger().warning("Processing error: " + e.getMessage());
+			this.log("Processing error: " + e.getMessage());
 		} catch (ConfigurationException e) {
-			this.plugin.getLogger().warning("Configuration error: " + e.getMessage());
+			this.log("Configuration error: " + e.getMessage());
 		}
 		
 		if (this.timeCollector.getMainConfigData() == null) {
-			this.plugin.getLogger().warning("Could not load main configuration file. Please verify the file exists and is in valid yaml.");
+			this.log("Could not load main configuration file. Please verify the file exists and is in valid yaml.");
 			return;
 		}
 		SubSectionGroupPermCommandsInterface cmdGroups = this.timeCollector.getMainConfigData().commands_definition_add();
 		this.commands.clear();
 		if (ConditionChecker.isStringEmpty(cmdGroups.add_group())) {
-			this.plugin.getLogger().warning("Main config does not have a command for adding group. All group actions will be skipped. Please review the main config file.");
+			this.log("Main config does not have a command for adding group. All group actions will be skipped. Please review the main config file.");
 		}
 		if (ConditionChecker.isStringEmpty(cmdGroups.add_permission())) {
-			this.plugin.getLogger().warning("Main config does not have a command for adding permissions. All permission actions will be skipped. Please review the main config file.");
+			this.log("Main config does not have a command for adding permissions. All permission actions will be skipped. Please review the main config file.");
 		}
 		// Store the commands to run to add groups/permissions
 		this.commands.put("group", cmdGroups.add_group());
