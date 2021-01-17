@@ -36,7 +36,7 @@ public class ActionManager {
 		} catch (ProcessException e) {
 			this.log("Processing error: " + e.getMessage());
 		} catch (ConfigurationException e) {
-			this.log("Configuration error: " + e.getMessage());
+			this.log("Configuration error: [" + e.getConfigFileName() + "]" + e.getMessage());
 		}
 		
 		if (this.timeCollector.getMainConfigData() == null) {
@@ -134,7 +134,32 @@ public class ActionManager {
 					this.replaceCommandPlaceholders(cmd, player.getName(), "", playerTimeInGame)
 				);
 			}
-		}
+			
+			// Check if there's a message to be sent to the user or chat
+			if (!ConditionChecker.isStringEmpty(def.send_message().to_everyone())) {
+				// Send a message to everyone
+				String msg = this.replaceCommandPlaceholders(
+						def.send_message().to_everyone(),
+						player.getName(),
+						"",
+						playerTimeInGame
+				);
+				// Send to entire chat
+				Bukkit.broadcastMessage(msg);
+			}
+
+			if (!ConditionChecker.isStringEmpty(def.send_message().to_user())) {
+				// Send a message to everyone
+				String msg = this.replaceCommandPlaceholders(
+						def.send_message().to_user(),
+						player.getName(),
+						"",
+						playerTimeInGame
+				);
+				// Send to user
+				player.sendMessage(msg);
+			}
+}
 
 	}
 	

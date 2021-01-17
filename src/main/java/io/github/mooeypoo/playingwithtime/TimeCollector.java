@@ -139,7 +139,7 @@ public class TimeCollector {
 		
 		return result;
 	}
-	
+		
 	/**
 	 * Get the main configuration data
 	 * @return Main configuration data

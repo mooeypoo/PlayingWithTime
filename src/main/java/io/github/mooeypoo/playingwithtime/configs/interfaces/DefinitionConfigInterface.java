@@ -33,6 +33,16 @@ public interface DefinitionConfigInterface {
 
 	@SubSection
 	@ConfComments({
+		"Send a message following the processing of this definition. The message can be",
+		"sent to the user specifically, or to the entire chat as a broadcast.",
+		"Available placeholders for messages:",
+		"- %playername% Player name",
+		"- %timeingame% Player's time in game, in minutes."
+	})
+	SubSectionMessageInterface send_message();
+
+	@SubSection
+	@ConfComments({
 		"A list of groups and permissions that the player must have for the process",
 		"to continue. This can include group names, permission names, or neither.",
 		"All of those rules must apply to the player in question, or the system will",
