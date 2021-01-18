@@ -5,10 +5,6 @@
 
 A minecraft server (spigot) plugin that allows admins to set special permission groups to players based on their time played on their server.
 
-## Stability
-
-This plugin is still being tested, and should not be used in live production servers.
-
 ## Author and Contribution
 
 Written and developed by mooeypoo (c) 2020. Distributed under GPL-v3 License.
