@@ -3,7 +3,9 @@ package io.github.mooeypoo.playingwithtime;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Random;
 import java.util.Set;
+import java.util.concurrent.ThreadLocalRandom;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -135,34 +137,59 @@ public class ActionManager {
 				);
 			}
 			
-			// Check if there's a message to be sent to the user or chat
-			if (!ConditionChecker.isStringEmpty(def.send_message().to_everyone())) {
-				// Send a message to everyone
-				String msg = this.replaceCommandPlaceholders(
-						def.send_message().to_everyone(),
-						player.getName(),
-						"",
-						playerTimeInGame
-				);
+			// Send messages if relevant
+			this.prepareAndSendMessage(player, def.send_message().to_user(), false);
+			this.prepareAndSendMessage(player, def.send_message().to_everyone(), true);
+		}
+	}
+
+	/**
+	 * Prepare a message from the given set in the config: choose a random entry,
+	 * replace placeholders, and send to user or broadcast.
+	 * 
+	 * @param player Relevant player
+	 * @param messages A set of messages from the config definition
+	 * @param isBroadcast The message is a broadcast
+	 */
+	private void prepareAndSendMessage(Player player, Set<String> messages, Boolean isBroadcast) {
+		if (!messages.isEmpty()) {
+			// Prepare the message
+			String msg = this.replaceCommandPlaceholders(
+					this.getRandomMessage(messages),
+					player.getName(),
+					"",
+					ConditionChecker.getPlayerTimeInMinutes(player)
+			);
+
+			if (ConditionChecker.isStringEmpty(msg)) {
+				// Sanity check; in case the message is empty, skip sending
+				return;
+			}
+
+			// Send the message
+			if (isBroadcast) {
 				// Send to entire chat
 				Bukkit.broadcastMessage(msg);
-			}
-
-			if (!ConditionChecker.isStringEmpty(def.send_message().to_user())) {
-				// Send a message to everyone
-				String msg = this.replaceCommandPlaceholders(
-						def.send_message().to_user(),
-						player.getName(),
-						"",
-						playerTimeInGame
-				);
-				// Send to user
+			} else {
+				// Send directly to the user
 				player.sendMessage(msg);
 			}
-}
-
+		}
+		
 	}
 	
+	private String getRandomMessage(Set<String> messages) {
+		ArrayList<String> msgList = new ArrayList<String>(messages); 
+		int randomElementIndex
+		  = ThreadLocalRandom.current().nextInt(messages.size()) % messages.size();
+		return msgList.get(randomElementIndex);
+//		// Pick a random message
+//		String[] arrayMessages = messages.toArray( new String[ messages.size() ] );
+//		// Generate random number
+//		int randomNumber = random.nextInt(messages.size());
+//		return arrayMessages[randomNumber];
+		
+	}
 	/**
 	 * Dispatch raw console command to the server
 	 * 

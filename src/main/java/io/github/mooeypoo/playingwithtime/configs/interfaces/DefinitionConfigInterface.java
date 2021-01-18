@@ -35,6 +35,10 @@ public interface DefinitionConfigInterface {
 	@ConfComments({
 		"Send a message following the processing of this definition. The message can be",
 		"sent to the user specifically, or to the entire chat as a broadcast.",
+		"If more than one message is provided per each (user and broadcast) in the list,",
+		"only one will be chosen, at random. However, both messages for to_user and to_everyone",
+		"will be assessed independently, which means admins can send both a random message to the",
+		"user directly *and* a random broadcast message to the entire chat.",
 		"Available placeholders for messages:",
 		"- %playername% Player name",
 		"- %timeingame% Player's time in game, in minutes."

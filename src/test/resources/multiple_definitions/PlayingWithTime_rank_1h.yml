@@ -8,6 +8,28 @@ time: '60'
 add:
   groups:
   permissions:
+ # Send a message following the processing of this definition. The message can be
+ # sent to the user specifically, or to the entire chat as a broadcast.
+ # Available placeholders for messages:
+ # - %playername% Player name
+ # - %timeingame% Player's time in game, in minutes.
+send_message:
+   # Send message to the entire chat.
+   # If more than one message is provided, a random one is chosen each time
+   # a user triggers the definition process.
+  to_everyone:
+   # Send message directly to the user. No one else will see it.
+   # If more than one message is provided, a random one is chosen each time
+   # a user triggers the definition process.
+  to_user:
+ # Custom command that will run if the user matches time played and prerequisites
+ # But will **not** run if the user already has the group/perms under "add" groups
+ # Watch out; if nothing is provided under 'add' group above, this command will run
+ # every time the user logs in if their time played is above the value.
+ # Available placeholders for commands:
+ # - %playername% Player name
+ # - %timeingame% Player's time in game, in minutes.
+custom_commands:
  # A list of groups and permissions that the player must have for the process
  # to continue. This can include group names, permission names, or neither.
  # All of those rules must apply to the player in question, or the system will
@@ -27,21 +49,3 @@ musthave:
 canthave:
   groups:
   permissions:
- # Send a message following the processing of this definition. The message can be
- # sent to the user specifically, or to the entire chat as a broadcast.
- # Available placeholders for messages:
- # - %playername% Player name
- # - %timeingame% Player's time in game, in minutes.
-send_message:
-   # Send message to the entire chat.
-  to_everyone: ''
-   # Send message directly to the user. No one else will see it.
-  to_user: ''
- # Custom command that will run if the user matches time played and prerequisites
- # But will **not** run if the user already has the group/perms under "add" groups
- # Watch out; if nothing is provided under 'add' group above, this command will run
- # every time the user logs in if their time played is above the value.
- # Available placeholders for commands:
- # - %playername% Player name
- # - %timeingame% Player's time in game, in minutes.
-custom_commands:
