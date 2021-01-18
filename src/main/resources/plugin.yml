@@ -7,3 +7,10 @@ permissions:
    playingwithtime.ignore:
       description: Anyone with this permission will be ignored from the process of calculating time played on the server.
       default: op
+   playingwithtime.cmd.process:
+      description: This permission allows a user to run the "/playingwithtime process" command.
+      default: op
+commands:
+   playingwithtime:
+      description: Commands triggering actions in PlayingWithTime plugin.
+      usage: Use `/playingwithtime process` to invoke processing of all online players.

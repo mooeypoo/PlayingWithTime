@@ -38,6 +38,9 @@ public class PlayingWithTime extends JavaPlugin implements Listener {
 		// Connect events
 		PluginManager pm = this.getServer().getPluginManager();
 		pm.registerEvents(this, (this));
+		
+		// Initialize command
+		this.getCommand("playingwithtime").setExecutor(new PlayingWithTimeCommandExecutor(this));
 
 		this.actionManager = new ActionManager(this);
 		this.getLogger().info("PlayingWithTime is enabled.");
@@ -64,12 +67,16 @@ public class PlayingWithTime extends JavaPlugin implements Listener {
 	 * @param player
 	 * @return System should process this player
 	 */
-	private Boolean shouldRunForPlayer(Player player) {
+	public Boolean shouldRunForPlayer(Player player) {
 		return (
 			// Don't automatically run for tests
 			!this.isTest &&
 			// Player doesn't have the permission to be ignored
 			!player.hasPermission("playingwithtime.ignore") 
 		);
+	}
+	
+	public ActionManager getActionManager() {
+		return this.actionManager;
 	}
 }
