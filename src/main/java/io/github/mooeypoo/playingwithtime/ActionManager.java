@@ -78,6 +78,10 @@ public class ActionManager {
 
 		// Queue commands for adding groups
 		for (String itemName : addList) {
+			if (ConditionChecker.isStringEmpty(itemName)) {
+				// Make sure the list item isn't empty
+				continue;
+			}
 			if (player.hasPermission(
 					isGroup ? "group." + itemName.trim() : itemName.trim()
 			)) {
