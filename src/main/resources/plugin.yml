@@ -10,6 +10,9 @@ permissions:
    playingwithtime.cmd.process:
       description: This permission allows a user to run the "/playingwithtime process" command.
       default: op
+   playingwithtime.cmd.reload:
+      description: This permission allows a user to run the "/playingwithtime reload" command.
+      default: op
 commands:
    playingwithtime:
       description: Commands triggering actions in PlayingWithTime plugin.

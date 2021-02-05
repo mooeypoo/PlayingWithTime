@@ -44,6 +44,14 @@ public class PlayingWithTimeCommandExecutor implements CommandExecutor {
 			}
 			
 			this.plugin.getLogger().info("[PlayingWithTime] Processing finished for " + counter + " online players.");
+		} else if (
+				// Process command
+				args[0].equalsIgnoreCase("reload") &&
+				sender.hasPermission("playingwithtime.cmd.reload")
+		) {
+			this.plugin.getLogger().info("[PlayingWithTime] Reloading configuration files.");
+			this.plugin.getActionManager().reload();
+			this.plugin.getLogger().info("[PlayingWithTime] Reload complete.");
 		}
 
 		return false;
