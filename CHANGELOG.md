@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Help command and explanation for /playingwithtime
+- Allow using color codes and formatting codes in messages in the config files.
+
 ## [v1.0.1]
 ### Added
 - Command 'reload' to enable reloading of files without a restart.

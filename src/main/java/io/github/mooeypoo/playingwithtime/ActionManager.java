@@ -8,6 +8,7 @@ import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -169,14 +170,16 @@ public class ActionManager {
 				// Sanity check; in case the message is empty, skip sending
 				return;
 			}
+			
+			String colorMessage = ChatColor.translateAlternateColorCodes('&', msg);
 
 			// Send the message
 			if (isBroadcast) {
 				// Send to entire chat
-				Bukkit.broadcastMessage(msg);
+				Bukkit.broadcastMessage(colorMessage);
 			} else {
 				// Send directly to the user
-				player.sendMessage(msg);
+				player.sendMessage(colorMessage);
 			}
 		}
 		
