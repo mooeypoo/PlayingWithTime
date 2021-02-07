@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v1.0.2]
+
 ### Added
 - Help command and explanation for /playingwithtime
 - Allow using color codes and formatting codes in messages in the config files.
@@ -42,7 +44,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add tests and validation
 
 
-[Unreleased]: https://github.com/mooeypoo/PlayingWithTime/compare/v1.0.1...HEAD
+[Unreleased]: https://github.com/mooeypoo/PlayingWithTime/compare/v1.0.2...HEAD
+[v1.0.2]: https://github.com/mooeypoo/PlayingWithTime/compare/v1.0.1...v1.0.2
 [v1.0.1]: https://github.com/mooeypoo/PlayingWithTime/compare/v1.0.0...v1.0.1
 [v1.0.0]: https://github.com/mooeypoo/PlayingWithTime/compare/v0.9.1...v1.0.0
 [v0.9.1]: https://github.com/mooeypoo/PlayingWithTime/compare/v0.9.0...v0.9.1
