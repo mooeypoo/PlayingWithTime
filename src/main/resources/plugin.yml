@@ -16,4 +16,4 @@ permissions:
 commands:
    playingwithtime:
       description: Commands triggering actions in PlayingWithTime plugin.
-      usage: Use `/playingwithtime process` to invoke processing of all online players.
+      usage: Use `/playingwithtime help` to see the list of all available actions. 
