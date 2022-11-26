@@ -5,8 +5,12 @@
 
   <groupId>io.github.mooeypoo</groupId>
   <artifactId>PlayingWithTime</artifactId>
-  <version>1.0.2</version>
+  <version>1.0.3</version>
   <name>Playing With Time</name>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
 
 	<licenses>
 		<license>
@@ -27,17 +31,17 @@
 		</resources>
 		<plugins>
 			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.8.1</version>
 				<configuration>
-					<source>1.8</source>
-					<target>1.8</target>
+					<release>17</release>
 				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-shade-plugin</artifactId>
-				<version>3.2.3</version>
+				<version>3.3.0-SNAPSHOT</version>
 				<executions>
 					<execution>
 						<phase>package</phase>
@@ -55,125 +59,139 @@
 					</relocations>
 				</configuration>
 			</plugin>
-      		<plugin>
-	  		    <groupId>org.jacoco</groupId>
-	  		    <artifactId>jacoco-maven-plugin</artifactId>
-	  		    <version>0.8.5</version>
-	  		    <configuration>
-	                <excludes>
-	                	<exclude>io/github/mooeypoo/playingwithtime/configs/**/</exclude>
-	                	<exclude>io/github/mooeypoo/playingwithtime/ActionManager.*</exclude>
-	                	<exclude>io/github/mooeypoo/playingwithtime/ProcessException.*</exclude>
-	                </excludes>
-	  		    </configuration>
-	  		    <executions>
-	  		        <!--
-	  		            Prepares the property pointing to the JaCoCo runtime agent which
-	  		            is passed as VM argument when Maven the Surefire plugin is executed.
-	  		        -->
-	  		        <execution>
-	  		            <id>pre-unit-test</id>
-	  		            <goals>
-	  		                <goal>prepare-agent</goal>
-	  		            </goals>
-	  		            <configuration>
-	  		                <!-- Sets the path to the file which contains the execution data. -->
-	  		                <destFile>${project.build.directory}/coverage-reports/jacoco.exec</destFile>
-	  		                <!--
-	  		                    Sets the name of the property containing the settings
-	  		                    for JaCoCo runtime agent.
-	  		                -->
-	  		                <propertyName>surefireArgLine</propertyName>
-	  		            </configuration>
-	  		        </execution>
-	  		        <!--
-	  		            Ensures that the code coverage report for unit tests is created after
-	  		            unit tests have been run.
-	  		        -->
-	  		        <execution>
-	  		            <id>post-unit-test</id>
-	  		            <phase>test</phase>
-	  		            <goals>
-	  		                <goal>report</goal>
-	  		            </goals>
-	  		            <configuration>
-	  		                <!-- Sets the path to the file which contains the execution data. -->
-	  		                <dataFile>${project.build.directory}/coverage-reports/jacoco.exec</dataFile>
-	  		                <!-- Sets the output directory for the code coverage report. -->
-	  		                <outputDirectory>${project.reporting.outputDirectory}/jacoco</outputDirectory>
-	  		            </configuration>
-	  		        </execution>
-	  		    </executions>
-	  		</plugin>
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>0.8.5</version>
+				<configuration>
+				</configuration>
+				<executions>
+					<!--
+                        Prepares the property pointing to the JaCoCo runtime agent which
+                        is passed as VM argument when Maven the Surefire plugin is executed.
+                    -->
+					<execution>
+						<id>pre-unit-test</id>
+						<goals>
+							<goal>prepare-agent</goal>
+						</goals>
+						<configuration>
+							<!-- Sets the path to the file which contains the execution data. -->
+							<destFile>${project.build.directory}/coverage-reports/jacoco.exec</destFile>
+							<!--
+                                Sets the name of the property containing the settings
+                                for JaCoCo runtime agent.
+                            -->
+							<propertyName>surefireArgLine</propertyName>
+						</configuration>
+					</execution>
+					<!--
+                        Ensures that the code coverage report for unit tests is created after
+                        unit tests have been run.
+                    -->
+					<execution>
+						<id>post-unit-test</id>
+						<phase>test</phase>
+						<goals>
+							<goal>report</goal>
+						</goals>
+						<configuration>
+							<!-- Sets the path to the file which contains the execution data. -->
+							<dataFile>${project.build.directory}/coverage-reports/jacoco.exec</dataFile>
+							<!-- Sets the output directory for the code coverage report. -->
+							<outputDirectory>${project.reporting.outputDirectory}/jacoco</outputDirectory>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 
-	      <!-- Used for unit tests -->
-	      <plugin>
-	        <groupId>org.apache.maven.plugins</groupId>
-	        <artifactId>maven-surefire-plugin</artifactId>
-	        <version>2.17</version>
-	        <configuration>
-	          <testFailureIgnore>true</testFailureIgnore>
-	          <!-- Sets the VM argument line used when unit tests are run. -->
-	          <!-- argLine>${surefireArgLine}</argLine -->
-	                <argLine>-Xmx1024m -XX:MaxPermSize=256m ${surefireArgLine}</argLine>
-	          <!-- Skips unit tests if the value of skip.unit.tests property is true -->
-	          <skipTests>${skip.unit.tests}</skipTests>
-	          <!-- Excludes integration tests when unit tests are run. -->
-	          <excludes>
-	            <exclude>**/IT*.java</exclude>
-	          </excludes>
-	        </configuration>
-	  		</plugin>
+			<!-- Used for unit tests -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>3.0.0-M1</version>
+				<configuration>
+					<testFailureIgnore>true</testFailureIgnore>
+					<!-- Sets the VM argument line used when unit tests are run. -->
+					<!-- argLine>${surefireArgLine}</argLine -->
+					<argLine>-Xmx1024m -XX:MaxPermSize=256m ${surefireArgLine}</argLine>
+					<!-- Skips unit tests if the value of skip.unit.tests property is true -->
+					<skipTests>${skip.unit.tests}</skipTests>
+					<!-- Excludes integration tests when unit tests are run. -->
+					<excludes>
+						<exclude>**/IT*.java</exclude>
+					</excludes>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
-
+	<pluginRepositories>
+		<pluginRepository>
+			<id>maven-snapshots</id>
+			<url>https://repository.apache.org/content/repositories/snapshots/</url>
+		</pluginRepository>
+	</pluginRepositories>
 	<repositories>
-	    <repository>
-	      <id>spigot-repo</id>
-	      <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
-	    </repository>
+		<repository>
+			<id>spigot-repo</id>
+			<url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
+		</repository>
 	</repositories>
 
 	<dependencies>
-	    <dependency>
-	      <groupId>org.spigotmc</groupId>
-	      <artifactId>spigot-api</artifactId>
-	      <version>1.16.3-R0.1-SNAPSHOT</version>
-	      <type>jar</type>
-	      <scope>provided</scope>
-	    </dependency>
+		<dependency>
+			<groupId>org.spigotmc</groupId>
+			<artifactId>spigot-api</artifactId>
+			<version>1.19.2-R0.1-SNAPSHOT</version>
+			<type>jar</type>
+			<scope>provided</scope>
+		</dependency>
+
 		<dependency>
 			<groupId>space.arim.dazzleconf</groupId>
 			<artifactId>dazzleconf-ext-snakeyaml</artifactId>
-			<version>1.1.0</version>
+			<version>1.2.1</version>
 		</dependency>
-	
+
 		<dependency>
 			<groupId>org.yaml</groupId>
 			<artifactId>snakeyaml</artifactId>
-			<version>1.26</version>
+			<version>1.28</version>
 			<scope>provided</scope>
 		</dependency>
-	
-		<dependency>
-	      <groupId>junit</groupId>
-	      <artifactId>junit</artifactId>
-	      <version>4.13.1</version>
-	      <scope>test</scope>
-	    </dependency>
-	
-		<dependency>
-		    <groupId>commons-io</groupId>
-		    <artifactId>commons-io</artifactId>
-		    <version>2.8.0</version>
-		    <scope>test</scope>
-		</dependency>	
 
 		<dependency>
-		    <groupId>com.github.seeseemelk</groupId>
-		    <artifactId>MockBukkit-v1.16</artifactId>
-		    <version>0.5.0</version>
-		    <scope>test</scope>
-	    </dependency>
-  </dependencies>
+			<groupId>org.apache.maven</groupId>
+			<artifactId>maven-artifact</artifactId>
+			<version>3.6.3</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/com.h2database/h2 -->
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+			<version>2.0.206</version>
+		</dependency>
+
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.13.1</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>2.8.0</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>com.github.seeseemelk</groupId>
+			<artifactId>MockBukkit-v1.16</artifactId>
+			<version>0.5.0</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
 </project>
